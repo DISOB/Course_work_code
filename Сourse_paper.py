@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from tabulate import tabulate
 from matplotlib import pyplot as plt
+import networkx as nx # Бибилотека для нахождения максимальной клики
 from scipy.interpolate import make_interp_spline, BSpline
 
 
@@ -26,16 +27,9 @@ excel_file = pd.ExcelFile('Data_coursework.xlsx')
 # Загрузите лист1 excel_file в качестве фрейма данных
 df = excel_file.parse('Лист1')
 
-# only read specific columns from an excel file
-# require_cols = [0, 1, 2, 3, 4, 5, 6]
-# required_df = pd.read_excel('Data_coursework.xlsx', usecols=require_cols)
-# required_df = required_df.head(8)
-# print(required_df.to_string(index=False))
-
 file = pd.ExcelFile('Data_coursework.xlsx')
 new_df = file.parse('Лист1')
 new_df = new_df.iloc[1:-1, :]
-print(new_df.shape)
 
 
 # Нахождение лог-доходности акций за каждый день периода
@@ -48,7 +42,7 @@ for i in range(0, len(new_df)):
 df_for_print = new_df.iloc[:8, :6]
 pprint_df(df_for_print)
 
-print("\n\n\n")
+print("\n\n")
 
 # Используется для установки максимального количества строк, которое будет отображаться при печати dataframe
 pd.set_option('display.max_rows', 500)
@@ -60,33 +54,50 @@ pd.set_option('display.width', 200)
 # Находим корреляции между активами
 corr_df = new_df.drop('Date', axis=1)
 correlation_matrix = corr_df.corr()
-Names = list(correlation_matrix.columns)
-
 pprint_df_corr(correlation_matrix.iloc[:5, :5])
+
+correlation_matrix.to_excel('Matrix_corr.xlsx')
 
 # ------------------------------------------------------------------------------------
 
-# Нахождение максимальных клик графа
+# Нахождение максимальной клики графа
 
-# import networkx as nx
-# G = nx.Graph(correlation_matrix)
-# print(len(max(nx.algorithms.clique.find_cliques(G), key = len)))
-
-point = 0.85
-res_name = set()
+point = 0.9 # Пороговое значение
+copy_corr = correlation_matrix.copy()
 
 for i in range(0, len(correlation_matrix)):
     for j in range(0, len(correlation_matrix.columns)):
-        if i != j and correlation_matrix.iat[i, j] >= point:
-            res_name.add(Names[i])
-            res_name.add(Names[j])
+        if correlation_matrix.iat[i, j] != 1 and correlation_matrix.iat[i, j] >= point:
+            copy_corr.iat[i, j] = 1
+        else:
+            copy_corr.iat[i, j] = 0
 
 
-print('\n', res_name)
-print('\n', len(res_name))
+G = nx.Graph(copy_corr)
+print()
+print(max(nx.algorithms.clique.find_cliques(G), key=len))
+print(len(max(nx.algorithms.clique.find_cliques(G), key=len)))
 
+# Нахождение максимального независимого множества графа
+
+point = 0.2 # Пороговое значение
+copy_corr = correlation_matrix.copy()
+
+for i in range(0, len(correlation_matrix)):
+    for j in range(0, len(correlation_matrix.columns)):
+        if correlation_matrix.iat[i, j] != 1 and -0.05 <= correlation_matrix.iat[i, j] <= point:
+            copy_corr.iat[i, j] = 1
+        else:
+            copy_corr.iat[i, j] = 0
+
+
+G = nx.Graph(copy_corr)
+print()
+print(max(nx.algorithms.clique.find_cliques(G), key=len))
+print(len(max(nx.algorithms.clique.find_cliques(G), key=len)))
 
 # ------------------------------------------------------------------------------------
+
 # Построение графика плотности распределения коэффициентов корреляции
 
 # point = -1
