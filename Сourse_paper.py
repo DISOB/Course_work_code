@@ -100,79 +100,85 @@ print(len(max(nx.algorithms.clique.find_cliques(G), key=len)))
 
 # ------------------------------------------------------------------------------------
 
-# Построение графика плотности распределения коэффициентов корреляции
+#Построение графика плотности распределения коэффициентов корреляции
 
-# point = -1
-# step = 2 / 80
-# point += step
-# x, y = [-1], [0]
-# for k in range(1, 80):
-#     count = 0
-#     for i in range(0, len(correlation_matrix)):
-#         for j in range(0, len(correlation_matrix.columns)):
-#             if i != j and ((point - step) <= correlation_matrix.iat[i, j] <= point):
-#                 count += 1
-#     x.append(point)
-#     y.append(count/2)
-#     point += step
-#
-#
-# #create data
-# x_p = np.array(x)
-# y_p = np.array(y)
-#
-# #define x as 200 equally spaced values between the min and max of original x
-# xnew = np.linspace(x[0], x[-1], 200)
-#
-# #define spline with degree k=7
-# spl = make_interp_spline(x, y, k=2)
-# y_smooth = spl(xnew)
-#
-# #create smooth line chart
-# plt.plot(xnew, y_smooth)
-# plt.xlabel("Коэффициент корреляции")
-# plt.ylabel("Плотность распределения")
-# plt.grid()
-# plt.show()
+point = -1
+step = 2 / 80
+point += step
+x, y = [-1], [0]
+for k in range(1, 80):
+    count = 0
+    for i in range(0, len(correlation_matrix)):
+        for j in range(0, len(correlation_matrix.columns)):
+            if i != j and ((point - step) <= correlation_matrix.iat[i, j] <= point):
+                count += 1
+    x.append(point)
+    y.append(count/2)
+    point += step
+
+#create data
+x_p = np.array(x)
+y_p = np.array(y)
+
+#define x as 200 equally spaced values between the min and max of original x
+xnew = np.linspace(x[0], x[-1], 200)
+
+#define spline with degree k=7
+spl = make_interp_spline(x, y, k=2)
+y_smooth = spl(xnew)
+
+plt.figure(1)
+plt.title('Плотность распределения коэффициентов корреляции')
+
+#create smooth line chart
+plt.plot(xnew, y_smooth)
+plt.xlabel("Коэффициент корреляции")
+plt.ylabel("Плотность распределения")
+plt.grid()
 
 # ------------------------------------------------------------------------------------
 
 # Построение графика плотности ребёр рыночного графа
 
-# point = 1
-# all_values = 148 * 147 / 2
-# step = 2 / 80
-# point -= step
-# x_2, y_2 = [1], [0]
-# for k in range(1, 80):
-#     count = 0
-#     for i in range(0, len(correlation_matrix)):
-#         for j in range(0, len(correlation_matrix.columns)):
-#             if i != j and correlation_matrix.iat[i, j] >= point:
-#                 count += 1
-#     x_2.append(point)
-#     y_2.append(count/2 / all_values)
-#     point -= step
-#
-# x_2 = x_2[::-1]
-# y_2 = y_2[::-1]
-#
-# x_p_2 = np.array(x_2)
-# y_p_2 = np.array(y_2)
-#
-# #define x as 200 equally spaced values between the min and max of original x
-# xnew = np.linspace(x_2[0], x_2[-1], 200)
-#
-# #define spline with degree k=7
-# spl = make_interp_spline(x_2, y_2, k=2)
-# y_smooth = spl(xnew)
-#
-# #create smooth line chart
-# plt.plot(xnew, y_smooth)
-#
-# # plt.plot(x_p_2, y_p_2)
-# plt.xlabel("Порог")
-# plt.ylabel("Плотность ребёр графа")
+point = 1
+all_values = 148 * 147 / 2
+step = 2 / 80
+point -= step
+x_2, y_2 = [1], [0]
+for k in range(1, 80):
+    count = 0
+    for i in range(0, len(correlation_matrix)):
+        for j in range(0, len(correlation_matrix.columns)):
+            if i != j and correlation_matrix.iat[i, j] >= point:
+                count += 1
+    x_2.append(point)
+    y_2.append(count/2 / all_values)
+    point -= step
+
+x_2 = x_2[::-1]
+y_2 = y_2[::-1]
+
+x_p_2 = np.array(x_2)
+y_p_2 = np.array(y_2)
+
+#define x as 200 equally spaced values between the min and max of original x
+xnew = np.linspace(x_2[0], x_2[-1], 200)
+
+#define spline with degree k=7
+spl = make_interp_spline(x_2, y_2, k=2)
+y_smooth = spl(xnew)
+
+plt.figure(2)
+plt.title('Плотность ребер рыночного графа')
+
+#create smooth line chart
+plt.plot(xnew, y_smooth)
+
+# plt.plot(x_p_2, y_p_2)
+plt.xlabel("Порог")
+plt.ylabel("Плотность ребёр графа")
+plt.grid()
+plt.show()
 
 # ------------------------------------------------------------------------------------
 
