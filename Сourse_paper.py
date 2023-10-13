@@ -78,6 +78,8 @@ print()
 print(max(nx.algorithms.clique.find_cliques(G), key=len))
 print(len(max(nx.algorithms.clique.find_cliques(G), key=len)))
 
+# ------------------------------------------------------------------------------------
+
 # Нахождение максимального независимого множества графа
 
 point = 0.2 # Пороговое значение
@@ -171,9 +173,6 @@ print(len(max(nx.algorithms.clique.find_cliques(G), key=len)))
 # # plt.plot(x_p_2, y_p_2)
 # plt.xlabel("Порог")
 # plt.ylabel("Плотность ребёр графа")
-
-
-
 
 # ------------------------------------------------------------------------------------
 
